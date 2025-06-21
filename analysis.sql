@@ -47,3 +47,24 @@ FROM customer_monetary
 )
 SELECT * FROM monetary_segmented
 ORDER BY monetary_segment;
+
+-- ANOMALY DETECTION ( decoy_noise ) --
+-- Mark lower 2.5% and upper 2.5% as anomaly
+WITH anomali_thresholds AS (
+SELECT
+PERCENTILE_CONT(0.025) WITHIN GROUP (ORDER BY decoy_noise) AS p2_5,
+PERCENTILE_CONT(0.975) WITHIN GROUP (ORDER BY decoy_noise) AS p97_5
+FROM e_commerce_transactions
+)
+SELECT 
+t.*,
+CASE
+WHEN t.decoy_noise <= p.p2_5 THEN '<=2.5% Anomaly' 
+WHEN t.decoy_noise >= p.p97_5 THEN '>=97.5% Anomaly' 
+ELSE 'WITHIN 95%'
+END AS anomaly_flag
+FROM e_commerce_transactions t
+CROSS JOIN anomali_thresholds p --;
+-- Query only Anomalies
+WHERE
+t.decoy_noise <= p.p2_5 OR t.decoy_noise >= p.p97_5;
