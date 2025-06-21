@@ -68,3 +68,28 @@ CROSS JOIN anomali_thresholds p --;
 -- Query only Anomalies
 WHERE
 t.decoy_noise <= p.p2_5 OR t.decoy_noise >= p.p97_5;
+
+-- MONTHLY REPEAT PURCHASE --
+WITH monthly_orders AS(
+SELECT
+customer_id,
+DATE_TRUNC('month', order_date) AS order_month,
+COUNT(order_id) AS monthly_order_count
+FROM e_commerce_transactions
+GROUP BY customer_id, order_month
+),
+repeat_purchases AS (
+SELECT *
+FROM monthly_orders
+WHERE monthly_order_count > 1
+)
+-- Individual repeat purchase |TOGGLE ONLY 1|
+SELECT * FROM repeat_purchases
+ORDER BY order_month, customer_id;
+-- Monthly summary |TOGGLE ONLY 1|
+--SELECT order_month,
+--COUNT(DISTINCT customer_id) AS repeat_customers,
+--SUM(monthly_order_count) AS total_repeat_orders
+--FROM repeat_purchases
+--GROUP BY order_month
+--ORDER BY order_month;
