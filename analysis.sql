@@ -1,17 +1,22 @@
+--==================================--
 -- RFM ANALYSIS WITH 6 SEGMENTATION --
+--==================================--
 -- Recency
 WITH reference_date AS (
-SELECT MAX(order_date) AS ref_date FROM e_commerce_transactions 
+SELECT MAX(order_date) AS ref_date 
+FROM e_commerce_transactions -- get latest date
 ),
 customer_recency AS (
-SELECT
-customer_id,
-(SELECT ref_date FROM reference_date) - MAX(order_date) AS recency_day
-FROM e_commerce_transactions
+SELECT customer_id,
+(SELECT ref_date FROM reference_date) - MAX(order_date) 
+AS recency_day
+-- this returns days after purchase, lower means more recent
+FROM e_commerce_transactions 
 GROUP BY customer_id
 )
 SELECT *,
 NTILE(6) OVER (ORDER BY recency_day ASC) AS recency_segment
+-- create 6 equal thresholds segment
 FROM customer_recency
 ORDER BY recency_day;
 
@@ -48,12 +53,15 @@ FROM customer_monetary
 SELECT * FROM monetary_segmented
 ORDER BY monetary_segment;
 
+--===================================--
 -- ANOMALY DETECTION ( decoy_noise ) --
+--===================================--
 -- Mark lower 2.5% and upper 2.5% as anomaly
 WITH anomali_thresholds AS (
 SELECT
 PERCENTILE_CONT(0.025) WITHIN GROUP (ORDER BY decoy_noise) AS p2_5,
 PERCENTILE_CONT(0.975) WITHIN GROUP (ORDER BY decoy_noise) AS p97_5
+-- Define boundary of 5%
 FROM e_commerce_transactions
 )
 SELECT 
@@ -65,11 +73,15 @@ ELSE 'WITHIN 95%'
 END AS anomaly_flag
 FROM e_commerce_transactions t
 CROSS JOIN anomali_thresholds p --;
--- Query only Anomalies
+/* Query only Anomalies | TOGGLE and remove
+semicolon above to Query all data points */
 WHERE
 t.decoy_noise <= p.p2_5 OR t.decoy_noise >= p.p97_5;
+-- return rows that fall outside 95% values
 
+--=========================--
 -- MONTHLY REPEAT PURCHASE --
+--=========================--
 WITH monthly_orders AS(
 SELECT
 customer_id,
@@ -83,10 +95,10 @@ SELECT *
 FROM monthly_orders
 WHERE monthly_order_count > 1
 )
--- Individual repeat purchase |TOGGLE ONLY 1|
+-- Option 1 : individual-level |TOGGLE ONLY 1|
 SELECT * FROM repeat_purchases
 ORDER BY order_month, customer_id;
--- Monthly summary |TOGGLE ONLY 1|
+-- Option 2 : monthly summary |TOGGLE ONLY 1|
 --SELECT order_month,
 --COUNT(DISTINCT customer_id) AS repeat_customers,
 --SUM(monthly_order_count) AS total_repeat_orders
