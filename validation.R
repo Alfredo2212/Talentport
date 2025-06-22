@@ -74,9 +74,5 @@ for (t in thresholds) {
 
 print(paste("Cut-off score with expected default <= 5%:", cutoff))
 ######################################################################
-# The cut-off score is extremely low at 0.01 - it implies that the 
-# model are very conservative. Recall through our dataset, the imbalance
-# case are only 1.23% defaulters in total and most features are uniformly
-# distributed. The model learned that most people don't default, so it 
-# outputs low scores for nearly everyone.
+# C_summary.md file
 ######################################################################
