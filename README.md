@@ -1,6 +1,6 @@
-_=
+--
 #SQL Analysis
-=-
+--
 This project contains SQL-based analytics and explanation for 
 customer behaviour, including RFM segmentation, anomaly detection,
 and monthly repeat purchase analysis
@@ -24,9 +24,9 @@ and monthly repeat purchase analysis
 Note that anomaly detection section and monthly repeat purchase
 have toggle options provided for extra meaningful insights
 
--=
+--
 #Credit Default Risk Modeling
-=-
+--
 This project addresses the challenge of **predicting credit default risk** 
 for loan applicants, particularly for a loan value of **IDR 5 million**. 
 It combines statistical and machine learning models with 
@@ -56,7 +56,7 @@ explainability tools to aid decision-making for financial institutions.
 - SMOTE for imbalanced target variable
 - Git for version control
 
-## Output
+##Output
 - decision_slide.pdf - Includes top 10 SHAP feature importance and loan decision
 
 ##Run Walkthrough
@@ -64,9 +64,9 @@ explainability tools to aid decision-making for financial institutions.
 2. Run cloud-based jupyter notebook (Google Colab) or local environment
 3. Open B_modeling.ipynb
 
--=
+--
 #R Statistical Validation
-=-
+--
 This section performs statistical validation using R to evaluate the 
 performance and calibration of the ensemble model built in Python.
 
